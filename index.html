@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directorio de Empleados</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px; text-align: left; border: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+        input { margin: 20px; padding: 8px; width: 300px; }
+    </style>
+</head>
+<body>
+    <h1>Directorio de Empleados</h1>
+    <input type="text" id="searchInput" placeholder="Buscar por nombre o departamento..." onkeyup="filterTable()">
+    <table id="employeeTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre Completo</th>
+                <th>Departamento</th>
+                <th>Extensión</th>
+                <th>Centro</th>
+                <th>Teléfono</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Los datos del CSV se cargarán aquí -->
+        </tbody>
+    </table>
+
+    <script>
+        // Función para cargar el archivo CSV
+        function loadCSV() {
+            fetch('empleados.csv')
+            .then(response => response.text())
+            .then(data => {
+                const rows = data.split('\n');
+                let html = '';
+                rows.forEach(row => {
+                    const columns = row.split(',');
+                    if (columns.length === 6) {  // Asegúrate de que hay 6 columnas
+                        html += '<tr>';
+                        html += `<td>${columns[0]}</td>`;
+                        html += `<td>${columns[1]}</td>`;
+                        html += `<td>${columns[2]}</td>`;
+                        html += `<td>${columns[3]}</td>`;
+                        html += `<td>${columns[4]}</td>`;
+                        html += `<td>${columns[5]}</td>`;
+                        html += '</tr>';
+                    }
+                });
+                document.querySelector('#employeeTable tbody').innerHTML = html;
+            });
+        }
+
+        // Filtrar los datos por búsqueda
+        function filterTable() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const table = document.getElementById('employeeTable');
+            const rows = table.getElementsByTagName('tr');
+            for (let i = 1; i < rows.length; i++) {  // Empezamos en 1 para evitar la cabecera
+                const cells = rows[i].getElementsByTagName('td');
+                let match = false;
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j].innerText.toLowerCase().includes(input)) {
+                        match = true;
+                        break;
+                    }
+                }
+                rows[i].style.display = match ? '' : 'none';
+            }
+        }
+
+        // Cargar el CSV cuando la página se carga
+        window.onload = loadCSV;
+    </script>
+</body>
+</html>
