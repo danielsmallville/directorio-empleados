@@ -9,12 +9,25 @@
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         th, td { padding: 12px; text-align: left; border: 1px solid #ddd; }
         th { background-color: #f2f2f2; }
-        input { margin: 20px; padding: 8px; width: 300px; }
+        input, select { margin: 20px; padding: 8px; width: 300px; }
     </style>
 </head>
 <body>
     <h1>Directorio de Empleados</h1>
-    <input type="text" id="searchInput" placeholder="Buscar por nombre o departamento..." onkeyup="filterTable()">
+
+    <!-- Campo de búsqueda -->
+    <input type="text" id="searchInput" placeholder="Buscar por nombre, departamento o centro de trabajo..." onkeyup="filterTableAndCentro()">
+    
+    <!-- Filtro por centro de trabajo -->
+    <select id="filterCentro" onchange="filterTableAndCentro()">
+        <option value="">Todos los centros</option>
+        <option value="Punto Alto">Punto Alto</option>
+        <option value="Aldama">Aldama</option>
+        <option value="Juventino">Juventino</option>
+        <option value="Cosmos">Cosmos</option>
+    </select>
+
+    <!-- Tabla de empleados -->
     <table id="employeeTable">
         <thead>
             <tr>
@@ -56,16 +69,18 @@
             });
         }
 
-        // Filtrar los datos por búsqueda
-        function filterTable() {
+        // Filtrar por búsqueda y centro de trabajo
+        function filterTableAndCentro() {
             const input = document.getElementById('searchInput').value.toLowerCase();
+            const select = document.getElementById('filterCentro').value.toLowerCase();
             const table = document.getElementById('employeeTable');
             const rows = table.getElementsByTagName('tr');
             for (let i = 1; i < rows.length; i++) {  // Empezamos en 1 para evitar la cabecera
                 const cells = rows[i].getElementsByTagName('td');
+                const centro = cells[4].innerText.toLowerCase();  // Columna 5: Centro de trabajo
                 let match = false;
                 for (let j = 0; j < cells.length; j++) {
-                    if (cells[j].innerText.toLowerCase().includes(input)) {
+                    if (cells[j].innerText.toLowerCase().includes(input) && (select === "" || centro === select)) {
                         match = true;
                         break;
                     }
